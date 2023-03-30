@@ -19,6 +19,7 @@ specifiers:
   '@angular/platform-browser-dynamic': ~15.2.0
   '@angular/router': ~15.2.0
   '@nrwl/angular': 15.8.9
+  '@nrwl/cli': ^15.8.9
   '@nrwl/cypress': 15.8.9
   '@nrwl/eslint-plugin-nx': 15.8.9
   '@nrwl/jest': 15.8.9
@@ -56,6 +57,7 @@ dependencies:
   '@angular/platform-browser-dynamic': 15.2.4_5mnga6y36cit4gnnhq4wsik724
   '@angular/router': 15.2.4_kei2kfq5mlkkjoqjistzcp4jwm
   '@nrwl/angular': 15.8.9_zdgaxjaesqa4wvk6hxoksomto4
+  '@nrwl/cli': 15.8.9
   rxjs: 7.8.0
   tslib: 2.5.0
   zone.js: 0.12.0
