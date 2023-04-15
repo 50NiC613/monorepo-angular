@@ -1,19 +1,22 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { CategoriesService, Category } from '@eshop/products';
+import { IconService, CategoriesService, Category } from '@eshop/products';
 
 @Component({
-    selector: 'admin-categories-list',
-    templateUrl: './categories.component.html',
-    styles: [],
-    encapsulation: ViewEncapsulation.Emulated,
-  providers: [MessageService]
-
+  selector: 'admin-categories',
+  templateUrl: './categories.component.html',
+  styles: [],
+  encapsulation: ViewEncapsulation.Emulated,
+  providers: [MessageService, IconService]
 })
 export class CategoriesComponent implements OnInit {
+  @Input()
+  id!: string;
 
-  productDialog = false;
+  @Input()
+  title!: string;
+  categoryDialog = false;
 
   deleteProductDialog = false;
 
@@ -31,31 +34,61 @@ export class CategoriesComponent implements OnInit {
 
   statuses: any[] = [];
 
+  icons: any[] = [];
 
-  constructor(private categoriesService: CategoriesService, private messageService: MessageService) { }
+  selectedIcon!: any;
+
+  filteredIcons: any[] = [];
+
+  constructor(private iconService: IconService, private categoriesService: CategoriesService, private messageService: MessageService) { }
 
   ngOnInit() {
-    this.categoriesService.getCategories().subscribe((data: Category[]) => this.categories = data);
+    this.iconService.getIcons().subscribe((data) => {
+      data = data.filter((value) => {
+        return value.icon.tags.indexOf('deprecate') === -1;
+      });
+
+      const icons = data;
+      icons.sort((icon1, icon2) => {
+        if (icon1.properties.name < icon2.properties.name) return -1;
+        // eslint-disable-next-line no-dupe-else-if
+        else if (icon1.properties.name < icon2.properties.name) return 1;
+        else return 0;
+      });
+
+      this.icons = icons;
+      this.filteredIcons = data;
+    });
+    this.categoriesService.getCategories().subscribe((data: Category[]) => {
+      console.log(data);
+      this.categories = data
+    });
 
     this.cols = [
-      { field: 'category', header: 'Category' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
-      { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' }
+      { field: 'category', header: 'Categoria' },
+      { field: 'icon', header: 'Icono' },
+      { field: 'name', header: 'Nombre' },
     ];
 
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' }
-    ];
+
   }
 
+  filtrar(event: { query: any; }) {
+    const filtered: any[] = [];
+    const query = event.query;
+    console.log(query)
+    for (let i = 0; i < this.icons.length; i++) {
+      const icon = this.icons[i];
+      if (icon.properties.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(icon);
+      }
+    }
+    this.filteredIcons = filtered;
+  }
   openNew() {
     this.category = {};
     this.submitted = false;
-    this.productDialog = true;
+    this.categoryDialog = true;
   }
 
   deleteSelectedProducts() {
@@ -64,7 +97,7 @@ export class CategoriesComponent implements OnInit {
 
   editProduct(category: Category) {
     this.category = { ...category };
-    this.productDialog = true;
+    this.categoryDialog = true;
   }
 
   deleteProduct(category: Category) {
@@ -74,44 +107,41 @@ export class CategoriesComponent implements OnInit {
 
   confirmDeleteSelected() {
     this.deleteProductsDialog = false;
-    this.categories = this.categories.filter(val => !this.selectedProducts.includes(val));
+    this.categories = this.categories.filter((val) => !this.selectedProducts.includes(val));
     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Categories Deleted', life: 3000 });
     this.selectedProducts = [];
   }
 
   confirmDelete() {
     this.deleteProductDialog = false;
-    this.categories = this.categories.filter(val => val.id !== this.category.id);
+    this.categories = this.categories.filter((val) => val.id !== this.category.id);
     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Category Deleted', life: 3000 });
     this.category = {};
   }
 
   hideDialog() {
-    this.productDialog = false;
+    this.categoryDialog = false;
     this.submitted = false;
   }
 
-  saveProduct() {
+  saveCategory() {
     this.submitted = true;
-
+    this.category.icon = this.selectedIcon.properties.name
     if (this.category.name?.trim()) {
       if (this.category.id) {
-        // @ts-ignore
-        this.category.inventoryStatus = this.category.inventoryStatus.value ? this.category.inventoryStatus.value : this.category.inventoryStatus;
         this.categories[this.findIndexById(this.category.id)] = this.category;
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
       } else {
-        this.category.id = this.createId();
-        this.category.icon = 'category-placeholder.svg';
-        // @ts-ignore
-        this.category.inventoryStatus = this.category.inventoryStatus ? this.category.inventoryStatus.value : 'INSTOCK';
-        this.categories.push(this.category);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
+        this.categoriesService.createCategory(this.category).subscribe((data: any) => {
+          if (data.success) {
+            this.categories.push(data.category);
+            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Categoria creada', life: 3000 });
+          }
+        });
+        this.categories = [...this.categories];
+        this.categoryDialog = false;
+        this.category = {};
       }
-
-      this.categories = [...this.categories];
-      this.productDialog = false;
-      this.category = {};
     }
   }
 
@@ -127,14 +157,7 @@ export class CategoriesComponent implements OnInit {
     return index;
   }
 
-  createId(): string {
-    let id = '';
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  }
+
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
