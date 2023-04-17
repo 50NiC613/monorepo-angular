@@ -22,7 +22,7 @@ export class CategoriesService {
   updateCategory(id: number, category: Category): Observable<Category> {
     return this.http.put<Category>(`http://localhost:3000/categories/${id}`, category)
   }
-  deleteCategory(id: number): Observable<Category> {
+  deleteCategory(id: string): Observable<Category> {
     return this.http.delete<Category>(`http://localhost:3000/categories/${id}`)
   }
 }

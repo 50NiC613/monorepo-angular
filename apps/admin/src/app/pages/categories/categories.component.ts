@@ -74,6 +74,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   filtrar(event: { query: any; }) {
+
     const filtered: any[] = [];
     const query = event.query;
     console.log(query)
@@ -90,6 +91,15 @@ export class CategoriesComponent implements OnInit {
     this.submitted = false;
     this.categoryDialog = true;
   }
+  borrarCategoria(id: string) {
+    this.categoriesService.deleteCategory(id).subscribe((data: any) => {
+      if (data.success) {
+        this.categories = this.categories.filter((val) => val.id !== id);
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Categoria borrada', life: 3000 });
+      }
+    });
+  }
+
 
   deleteSelectedProducts() {
     this.deleteProductsDialog = true;
