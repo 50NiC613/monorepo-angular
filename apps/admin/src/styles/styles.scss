@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "../../../styles/admin";
+@import '../../../../styles/admin';
+
 $gutter: 1rem; //for primeflex grid system
-@import "assets/layout/styles/layout/layout.scss";
+@import '../assets/layout/styles/layout/layout.scss';
