@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { IconService, CategoriesService, Category } from '@eshop/products';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'admin-categories',
@@ -11,6 +12,8 @@ import { IconService, CategoriesService, Category } from '@eshop/products';
   providers: [MessageService, IconService]
 })
 export class CategoriesComponent implements OnInit {
+  form: FormGroup;
+
   @Input()
   id!: string;
 
@@ -40,45 +43,49 @@ export class CategoriesComponent implements OnInit {
 
   filteredIcons: any[] = [];
 
-  constructor(private iconService: IconService, private categoriesService: CategoriesService, private messageService: MessageService) { }
+  constructor(private formBuilder: FormBuilder, private iconService: IconService, private categoriesService: CategoriesService, private messageService: MessageService) { }
 
   ngOnInit() {
-    this.iconService.getIcons().subscribe((data) => {
-      data = data.filter((value) => {
-        return value.icon.tags.indexOf('deprecate') === -1;
+    this.form = this.formBuilder.group({
+      name: [''],
+      icon: [''],
+
+      this.iconService.getIcons().subscribe((data) => {
+        data = data.filter((value) => {
+          return value.icon.tags.indexOf('deprecate') === -1;
+        });
+
+        const icons = data;
+        icons.sort((icon1, icon2) => {
+          if (icon1.properties.name < icon2.properties.name) return -1;
+          // eslint-disable-next-line no-dupe-else-if
+          else if (icon1.properties.name < icon2.properties.name) return 1;
+          else return 0;
+        });
+
+        this.icons = icons;
+        this.filteredIcons = data;
+      });
+      this.categoriesService.getCategories().subscribe((data: Category[]) => {
+        console.log(data);
+        this.categories = data
       });
 
-      const icons = data;
-      icons.sort((icon1, icon2) => {
-        if (icon1.properties.name < icon2.properties.name) return -1;
-        // eslint-disable-next-line no-dupe-else-if
-        else if (icon1.properties.name < icon2.properties.name) return 1;
-        else return 0;
-      });
-
-      this.icons = icons;
-      this.filteredIcons = data;
-    });
-    this.categoriesService.getCategories().subscribe((data: Category[]) => {
-      console.log(data);
-      this.categories = data
-    });
-
-    this.cols = [
-      { field: 'category', header: 'Categoria' },
-      { field: 'icon', header: 'Icono' },
-      { field: 'name', header: 'Nombre' },
-    ];
+      this.cols = [
+        { field: 'category', header: 'Categoria' },
+        { field: 'icon', header: 'Icono' },
+        { field: 'name', header: 'Nombre' },
+      ];
 
 
-  }
+    }
 
   filtrar(event: { query: any; }) {
 
-    const filtered: any[] = [];
-    const query = event.query;
-    console.log(query)
-    for (let i = 0; i < this.icons.length; i++) {
+      const filtered: any[] = [];
+      const query = event.query;
+      console.log(query)
+    for(let i = 0; i< this.icons.length; i++) {
       const icon = this.icons[i];
       if (icon.properties.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(icon);
