@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { IconService, CategoriesService, Category } from '@eshop/products';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'admin-categories',
@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   providers: [MessageService, IconService]
 })
 export class CategoriesComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
 
   @Input()
   id!: string;
@@ -47,45 +47,47 @@ export class CategoriesComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      name: [''],
-      icon: [''],
+      name: ['', Validators.required],
+      icon: ['', Validators.required],
+      color: ['', Validators.required]
+    })
 
-      this.iconService.getIcons().subscribe((data) => {
-        data = data.filter((value) => {
-          return value.icon.tags.indexOf('deprecate') === -1;
-        });
-
-        const icons = data;
-        icons.sort((icon1, icon2) => {
-          if (icon1.properties.name < icon2.properties.name) return -1;
-          // eslint-disable-next-line no-dupe-else-if
-          else if (icon1.properties.name < icon2.properties.name) return 1;
-          else return 0;
-        });
-
-        this.icons = icons;
-        this.filteredIcons = data;
-      });
-      this.categoriesService.getCategories().subscribe((data: Category[]) => {
-        console.log(data);
-        this.categories = data
+    this.iconService.getIcons().subscribe((data) => {
+      data = data.filter((value) => {
+        return value.icon.tags.indexOf('deprecate') === -1;
       });
 
-      this.cols = [
-        { field: 'category', header: 'Categoria' },
-        { field: 'icon', header: 'Icono' },
-        { field: 'name', header: 'Nombre' },
-      ];
+      const icons = data;
+      icons.sort((icon1, icon2) => {
+        if (icon1.properties.name < icon2.properties.name) return -1;
+        // eslint-disable-next-line no-dupe-else-if
+        else if (icon1.properties.name < icon2.properties.name) return 1;
+        else return 0;
+      });
+
+      this.icons = icons;
+      this.filteredIcons = data;
+    });
+    this.categoriesService.getCategories().subscribe((data: Category[]) => {
+      console.log(data);
+      this.categories = data
+    });
+
+    this.cols = [
+      { field: 'category', header: 'Categoria' },
+      { field: 'icon', header: 'Icono' },
+      { field: 'name', header: 'Nombre' },
+    ];
 
 
-    }
+  }
 
   filtrar(event: { query: any; }) {
 
-      const filtered: any[] = [];
-      const query = event.query;
-      console.log(query)
-    for(let i = 0; i< this.icons.length; i++) {
+    const filtered: any[] = [];
+    const query = event.query;
+    console.log(query)
+    for (let i = 0; i < this.icons.length; i++) {
       const icon = this.icons[i];
       if (icon.properties.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(icon);
@@ -143,7 +145,14 @@ export class CategoriesComponent implements OnInit {
 
   saveCategory() {
     this.submitted = true;
-    this.category.icon = this.selectedIcon.properties.name
+    if (this.form.invalid) {
+      return
+    }
+    this.category = {
+      name: this.form.controls['name'].value,
+      color: this.form.controls['color'].value,
+      icon: this.selectedIcon.properties.name
+    }
     if (this.category.name?.trim()) {
       if (this.category.id) {
         this.categories[this.findIndexById(this.category.id)] = this.category;

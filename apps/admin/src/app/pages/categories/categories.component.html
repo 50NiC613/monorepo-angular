@@ -106,13 +106,15 @@
 
         <p-dialog [(visible)]="categoryDialog" [style]="{ width: '450px' }" header="Detalles de categor&iacute;a" [modal]="true" class="p-fluid">
             <ng-template pTemplate="content">
+              <form [formGroup]='form'>
+                
                 <div class="field">
                     <label for="name">Nombre</label>
                     <input
                         type="text"
                         pInputText
                         id="name"
-                        [(ngModel)]="category.name"
+                       formControlName='name' 
                         required
                         autofocus
                         [ngClass]="{ 'ng-invalid ng-dirty': submitted && !category.name }"
@@ -124,8 +126,8 @@
                     <label for="color">Color</label>
                     <p-colorPicker
                         [inline]="true"
-                        [(ngModel)]="category.color"
                         [ngClass]="{ 'ng-invalid ng-dirty': submitted && !category.color }"
+                       formControlName='color' 
                         required
                         autofocus
                         id="color"
@@ -149,6 +151,7 @@
                     </span>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !category.icon">Es necesario el icono.</small>
                 </div>
+              </form>
             </ng-template>
 
             <ng-template pTemplate="footer">

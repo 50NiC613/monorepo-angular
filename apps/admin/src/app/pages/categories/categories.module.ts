@@ -29,6 +29,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     AutoCompleteModule,
     FileUploadModule,
     FormsModule,
+    ReactiveFormsModule,
     ButtonModule,
     RippleModule,
     ToastModule,
