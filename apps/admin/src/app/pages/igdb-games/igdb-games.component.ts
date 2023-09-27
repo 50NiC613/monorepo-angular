@@ -1,17 +1,18 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { IconService, CategoriesService, Category } from '@eshop/products';
+import { Category, IGDBGamesService, IconService } from '@eshop/products';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Game } from 'libs/products/src/lib/models/game';
 
 @Component({
-  selector: 'admin-categories',
-  templateUrl: './categories.component.html',
+  selector: 'admin-igdb-games',
+  templateUrl: './igdb-games.component.html',
   styles: [],
   encapsulation: ViewEncapsulation.Emulated,
   providers: [MessageService, IconService]
 })
-export class CategoriesComponent implements OnInit {
+export class IGDBGamesComponent implements OnInit {
   form!: FormGroup;
 
   @Input()
@@ -32,6 +33,7 @@ export class CategoriesComponent implements OnInit {
   selectedProducts: Category[] = [];
 
   submitted = false;
+  force = true;
 
   cols: any[] = [];
 
@@ -43,15 +45,19 @@ export class CategoriesComponent implements OnInit {
 
   filteredIcons: any[] = [];
 
-  constructor(private formBuilder: FormBuilder, private iconService: IconService, private categoriesService: CategoriesService, private messageService: MessageService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private iconService: IconService,
+    private gamesService: IGDBGamesService,
+    private messageService: MessageService
+  ) { }
 
   ngOnInit() {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       icon: ['', Validators.required],
       color: ['', Validators.required]
-    })
-
+    });
     this.iconService.getIcons().subscribe((data) => {
       data = data.filter((value) => {
         return value.icon.tags.indexOf('deprecate') === -1;
@@ -68,25 +74,22 @@ export class CategoriesComponent implements OnInit {
       this.icons = icons;
       this.filteredIcons = data;
     });
-    this.categoriesService.getCategories().subscribe((data: Category[]) => {
+    this.gamesService.getGames().subscribe((data: any[]) => {
       console.log(data);
-      this.categories = data
+      this.categories = data;
     });
 
     this.cols = [
       { field: 'category', header: 'Categoria' },
       { field: 'icon', header: 'Icono' },
-      { field: 'name', header: 'Nombre' },
+      { field: 'name', header: 'Nombre' }
     ];
-
-
   }
 
-  filtrar(event: { query: any; }) {
-
+  filtrar(event: { query: any }) {
     const filtered: any[] = [];
     const query = event.query;
-    console.log(query)
+    console.log(query);
     for (let i = 0; i < this.icons.length; i++) {
       const icon = this.icons[i];
       if (icon.properties.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
@@ -95,19 +98,13 @@ export class CategoriesComponent implements OnInit {
     }
     this.filteredIcons = filtered;
   }
+
   openNew() {
     this.category = {};
     this.submitted = false;
     this.categoryDialog = true;
   }
-  borrarCategoria(id: string) {
-    this.categoriesService.deleteCategory(id).subscribe((data: any) => {
-      if (data.success) {
-        this.categories = this.categories.filter((val) => val.id !== id);
-        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Categoria borrada', life: 3000 });
-      }
-    });
-  }
+
 
 
   deleteSelectedProducts() {
@@ -146,24 +143,23 @@ export class CategoriesComponent implements OnInit {
   saveCategory() {
     this.submitted = true;
     if (this.form.invalid) {
-      return
+      return;
     }
+    console.log(this.selectedIcon);
+    console.log(this.form.controls['name'].value, ' : Nombre');
+    console.log(this.form.controls['color'].value, ' : Color');
+    console.log(this.selectedIcon.properties.name, ' : Icono');
     this.category = {
       name: this.form.controls['name'].value,
       color: this.form.controls['color'].value,
       icon: this.selectedIcon.properties.name
-    }
+    };
     if (this.category.name?.trim()) {
       if (this.category.id) {
         this.categories[this.findIndexById(this.category.id)] = this.category;
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
       } else {
-        this.categoriesService.createCategory(this.category).subscribe((data: any) => {
-          if (data.success) {
-            this.categories.push(data.category);
-            this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Categoria creada', life: 3000 });
-          }
-        });
+
         this.categories = [...this.categories];
         this.categoryDialog = false;
         this.category = {};
@@ -182,8 +178,6 @@ export class CategoriesComponent implements OnInit {
 
     return index;
   }
-
-
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { CategoriesRoutingModule } from './categories-routing.module';
-import { CategoriesComponent } from './categories.component';
+import { GamesRoutingModule } from './games-routing.module';
+import { GamesComponent } from './games.component';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -19,15 +19,20 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-
+import { ChipModule } from 'primeng/chip';
+import { NewGameComponent } from './new-game.component';
+import { ListboxModule } from 'primeng/listbox';
+import { TabViewModule } from 'primeng/tabview';
 @NgModule({
-  declarations: [CategoriesComponent],
+  declarations: [GamesComponent, NewGameComponent],
   imports: [
     CommonModule,
-    CategoriesRoutingModule,
+    GamesRoutingModule,
     TableModule,
+    TabViewModule,
     AutoCompleteModule,
     FileUploadModule,
+    ListboxModule,
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -41,7 +46,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     RadioButtonModule,
     InputNumberModule,
     DialogModule,
-    ColorPickerModule
+    ColorPickerModule,
+    ChipModule
   ]
 })
-export class CategoriesModule { }
+export class GamesModule { }

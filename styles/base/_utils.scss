@@ -1,10 +1,11 @@
 .card {
     background: var(--surface-card);
+    border: 1px solid var(--surface-border);
     padding: 2rem;
     margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
     border-radius: $borderRadius;
-    border: 3px solid black;
-    box-shadow: 5px 10px black;
+
     &:last-child {
         margin-bottom: 0;
     }

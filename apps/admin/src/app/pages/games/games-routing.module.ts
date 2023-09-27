@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { GamesComponent } from './games.component';
+import { NewGameComponent } from './new-game.component';
+
 
 @NgModule({
   imports: [RouterModule.forChild([
-    { path: 'games', loadChildren: () => import('./games/games.module').then(m => m.GamesModule) },
-    { path: 'igdb', loadChildren: () => import('./igdb-games/igdb-games.module').then(m => m.IGDBGamesModule) },
+    { path: '', component: GamesComponent },
+    { path: 'new', component: NewGameComponent },
 
     // { path: 'empty', loadChildren: () => import('./empty/emptydemo.module').then(m => m.EmptyDemoModule) },
     //{ path: 'timeline', loadChildren: () => import('./timeline/timelinedemo.module').then(m => m.TimelineDemoModule) },
@@ -12,4 +15,4 @@ import { RouterModule } from '@angular/router';
   ])],
   exports: [RouterModule]
 })
-export class AdminRoutingModule { }
+export class GamesRoutingModule { }

@@ -1,10 +1,11 @@
 $gutter: 1rem; //for primeflex grid system
 
+//layout
 @import './base/layout.scss';
 
 //LIbraries
 @import '~primeicons/primeicons.css';
-//@import '~primeng/resources/themes/soho-dark/theme.css';
+@import '~primeng/resources/themes/arya-green/theme.css';
 //@import 'soho-dark/theme.css';
 @import '~primeng/resources/primeng.min.css';
 @import '~primeflex/primeflex.css';
@@ -13,3 +14,5 @@ $gutter: 1rem; //for primeflex grid system
 @import './libs/ui/ui';
 
 @import './libs/products/product-item';
+
+//styles

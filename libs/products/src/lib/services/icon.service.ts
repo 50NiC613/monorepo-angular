@@ -22,7 +22,6 @@ export class IconService {
 
     return this.http.get('assets/demo/data/icons.json').pipe(
       map((response: any) => {
-        console.log(response)
         this.icons = response.icons;
         return this.icons;
       })

@@ -16,7 +16,7 @@
                 "tsConfig": "apps/admin/tsconfig.app.json",
                 "inlineStyleLanguage": "scss",
                 "assets": ["apps/admin/src/favicon.ico", "apps/admin/src/assets"],
-                "styles": ["apps/admin/src/styles/styles.scss", "apps/admin/src/styles/neubrutalism/theme.css"],
+                "styles": ["apps/admin/src/styles/styles.scss"],
                 "scripts": []
             },
             "configurations": {
@@ -48,13 +48,14 @@
         },
         "serve": {
             "executor": "@angular-devkit/build-angular:dev-server",
-             "options": {
-            "browserTarget": "project:build",
-            "host": "0.0.0.0"  ,
-            "ssl": true,
-            "sslKey": "apps/admin/ssl/localhost-key.pem",
-            "sslCert": "apps/admin/ssl/localhost.pem"        
-          },
+            "options": {
+                "browserTarget": "project:build",
+                "host": "0.0.0.0",
+                "ssl": true,
+                "sslKey": "apps/admin/ssl/localhost-key.pem",
+                "sslCert": "apps/admin/ssl/localhost.pem",
+                "proxyConfig": "apps/admin/proxy.conf.json"
+            },
             "configurations": {
                 "production": {
                     "browserTarget": "admin:build:production"
