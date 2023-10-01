@@ -9,6 +9,6 @@ tasks:
   - init: pnpm install
     command: pnpm nx run admin:serve
   - command:  mkdir -p /workspace/data && mongod --dbpath /workspace/data
-  - command: git clone https://github.com/50NiC613/NodeJS-MongoDB /workspace/server/ && cd /workspace/server/ && pnpm install && pnpm nx run start
+  - command: git clone https://github.com/50NiC613/NodeJS-MongoDB /workspace/server/ && cd /workspace/server/ && pnpm install && pnpm run start
 
 
