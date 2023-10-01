@@ -16,7 +16,7 @@ export class IGDBGamesService {
       headers: {
         'Accept': 'application/json',
         'Client-ID': '4mmynh9wdgtfip44dm0xh2wrvgs10y',
-        'Authorization': 'Bearer 85ojkshxl45adsjgln11wbwswxyirw',
+        'Authorization': 'Bearer n1c6o3s5taz8oz83akid6aji43epu3',
       }
     })
   }
@@ -26,7 +26,7 @@ export class IGDBGamesService {
       .set('Client-ID', '4mmynh9wdgtfip44dm0xh2wrvgs10y')
       .set('Authorization', 'Bearer 85ojkshxl45adsjgln11wbwswxyirw');
     const body = `search "${searchTerm}"; fields *; where platforms = 9;limit 500;`;
-    return this.http.post<any[]>(`${this.apiUrl}`, body, { headers });
+    return this.http.post<any[]>('/api/v4/games', body, { headers });
   }
 
 
