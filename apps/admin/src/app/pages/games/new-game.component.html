@@ -1,0 +1,73 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button class="p-button-success p-button-raised mr-2" icon="pi pi-plus" label="Nuevo" pButton pRipple></button>
+
+                        <button
+                            (click)="deleteSelectedProducts()"
+                            [disabled]="!selectedProducts || !selectedProducts.length"
+                            class="p-button-danger"
+                            icon="pi pi-trash"
+                            label="Borrar"
+                            pButton
+                            pRipple
+                        ></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button (click)="Import()" class="p-button-raised p-button-help" icon="pi pi-download" label="Importar desde IGDB" pButton pRipple></button>
+                </ng-template>
+            </p-toolbar>
+
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="Header I">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Header II">
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Header III">
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+        </div>
+
+        <p-dialog [(visible)]="ImportGameDialog" [modal]="true" [style]="{ width: '450px' }" header="Importar  juego desde IGDB">
+            <div class="flex align-items-center justify-content-center">
+                <span class="p-input-icon-left">
+                    <i *ngIf="!searching" class="pi pi-search"></i>
+                    <i *ngIf="searching" class="pi pi-spin pi-spinner"></i>
+
+                    <input type="text" pInputText [(ngModel)]="searchTerm" (keyup.enter)="searchGames()" />
+                    <button pButton type="button" label="Buscar" (click)="searchGames()"></button>
+                </span>
+            </div>
+            <div class="flex align-items-center justify-content-center mt-2">
+                <p-listbox *ngIf="games.length > 0" [options]="games" [(ngModel)]="selectedGame" optionLabel="name"></p-listbox>
+            </div>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteProductsDialog" [modal]="true" [style]="{ width: '450px' }" header="Confirm">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Are you sure you want to delete selected products?</span>
+            </div>
+        </p-dialog>
+    </div>
+</div>

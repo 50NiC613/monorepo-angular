@@ -1,0 +1,12 @@
+<div [ngClass]='containerClass' class='layout-wrapper'>
+  <admin-topbar></admin-topbar>
+  <div class='layout-sidebar'>
+    <admin-sidebar></admin-sidebar>
+  </div>
+  <div class='layout-main-container'>
+    <div class='layout-main'>
+      <router-outlet></router-outlet>
+    </div>
+    <admin-footer></admin-footer>
+  </div>
+</div>
